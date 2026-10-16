@@ -14,5 +14,5 @@ Fill in once, keep updated. Numbers below come from files/runs, never retyped fr
 - Python / PyTorch / CUDA: (fill from results/raw/env_baseline.json)
 - GPU: (fill)
 - Global seed(s): 0
-- Clean baseline Rank-1 (NM/BG/CL) obtained: (fill from Notebook 01 gate table)
+- Clean baseline Rank-1 (NM/BG/CL) obtained: GaitBase 97.87 / 93.85 / 77.03 (Kaggle run 2026-10-16, `evaluate_attack(attack=None)`; = OpenGait evaluator at fp32 distance; OpenGait stock fp16 distance: 97.90 / 93.87 / 77.01). Gate re-confirmed by the fixed Notebook 01: (fill)
 - OpenGait reported Rank-1 (NM/BG/CL) for comparison: GaitBase 97.6 / 94.0 / 77.4; GaitSet 95.8 / 90.0 / 75.4 (OpenGait `docs/1.model_zoo.md` at the pinned commit, identical view excluded)

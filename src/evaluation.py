@@ -285,12 +285,35 @@ def aggregate_rank1(df: pd.DataFrame, col: str = "clean_rank1_viewavg") -> pd.Da
 
 def official_opengait_rank1(model: GaitModel, data: CasiaB) -> dict:
     """Run OpenGait's own `evaluate_indoor_dataset` on embeddings of every test sequence.
-    Used to check that `evaluate_attack(attack=None)` reproduces OpenGait exactly."""
+
+    Returns {"fp32": {"NM@R1": ...}, "fp16": {...}}. Embeddings are the same (fp16 autocast
+    values); only the distance precision differs. `evaluate_attack` computes distances in fp32,
+    so it must equal "fp32" exactly. "fp16" is OpenGait's stock pipeline (it keeps the fp16
+    dtype into `cuda_dist`); near-tie rounding makes it differ by a few hundredths of a pp
+    (measured 2026-10-16: <= 0.03 pp; docs/deviations.md)."""
     from evaluation.evaluator import evaluate_indoor_dataset  # OpenGait's
     emb = np.concatenate([model.embed(data.load(r)).cpu().numpy() for r in data.records])
-    if model.fp16_eval:  # OpenGait keeps the fp16 autocast output dtype
-        emb = emb.astype(np.float16)
-    info = {"embeddings": emb, "labels": [r.subject for r in data.records],
+    info = {"labels": [r.subject for r in data.records],
             "types": [r.seq_type for r in data.records], "views": [r.view for r in data.records]}
-    res = evaluate_indoor_dataset(info, "CASIA-B", metric="euc")
-    return {k.split("/")[-1]: float(v) for k, v in res.items()}
+    out = {}
+    for name, e in [("fp32", emb), ("fp16", emb.astype(np.float16) if model.fp16_eval else emb)]:
+        res = evaluate_indoor_dataset({"embeddings": e, **info}, "CASIA-B", metric="euc")
+        out[name] = {k.split("/")[-1]: float(v) for k, v in res.items()}
+    return out
+
+
+def gate_rows(model_name: str, table: pd.DataFrame, official: dict, reported: dict,
+              tolerance_pct: float) -> list[dict]:
+    """Notebook 01 gate, one row per condition. `table` from `aggregate_rank1`, `official` from
+    `official_opengait_rank1`. PASS needs matches_evaluator (exact vs OpenGait's evaluator at
+    fp32 distance) and within_tolerance (vs reported numbers)."""
+    rows = []
+    for cond in ["NM", "BG", "CL"]:
+        ours, og, og16, rep = (table.loc[cond, "mean"], official["fp32"][f"{cond}@R1"],
+                               official["fp16"][f"{cond}@R1"], reported[cond])
+        rows.append(dict(model=model_name, condition=cond, ours=round(ours, 2),
+                         opengait_evaluator=round(og, 2), opengait_evaluator_fp16=round(og16, 2),
+                         reported=rep, diff_vs_reported=round(ours - rep, 2),
+                         matches_evaluator=abs(ours - og) < 0.01,
+                         within_tolerance=abs(ours - rep) <= tolerance_pct))
+    return rows
