@@ -11,8 +11,8 @@ Fill in once, keep updated. Numbers below come from files/runs, never retyped fr
   - So frames are packed untouched with OpenGait's own script in its no-transform mode: `python datasets/pretreatment.py -i <data>/archive/output -o <data>/CASIA-B-pkl -d GREW -n 8` (from OpenGait dir).
   - Completeness: 13,592 / 13,640 sequence folders present, 0 empty, 1,117,083 frames. 48 missing (33 train, 15 test): 005/*/000 (all 10 types); 026/cl-02/162; 037/bg-01/{144,162,180}; 037/bg-02/{054,126,162}; 048/cl-01/162; 048/cl-02/{054,126,144,162}; 068/nm-01/{054,126,144,162}; 068/nm-02/{126,162}; 068/nm-03/{126,144,180}; 068/nm-04/{126,144}; 079/bg-02/{054,162}; 088/nm-03/{054,126,162,180}; 088/nm-04/{054,126,144,162,180}; 109/nm-01/{126,144,162,180}. Whether these match gaps in the official zip is unverified; the clean gate (within 1% of OpenGait) is the acceptance test.
 - Split file: OpenGait `datasets/CASIA-B/CASIA-B.json` (train 001–074, test 075–124)
-- Python / PyTorch / CUDA: (fill from results/raw/env_baseline.json)
-- GPU: (fill)
+- Python / PyTorch / CUDA: 3.13.15 / 2.11.0+cu128 / 12.8 (Kaggle, from results/raw/env_baseline.json)
+- GPU: Tesla T4 (Kaggle)
 - Global seed(s): 0
-- Clean baseline Rank-1 (NM/BG/CL) obtained: GaitBase 97.87 / 93.85 / 77.03 (Kaggle run 2026-10-16, `evaluate_attack(attack=None)`; = OpenGait evaluator at fp32 distance; OpenGait stock fp16 distance: 97.90 / 93.87 / 77.01). Gate re-confirmed by the fixed Notebook 01: (fill)
+- Clean baseline Rank-1 (NM/BG/CL) obtained: GaitBase 97.87 / 93.85 / 77.03 (Kaggle run 2026-10-16, `evaluate_attack(attack=None)`; = OpenGait evaluator at fp32 distance; OpenGait stock fp16 distance: 97.90 / 93.87 / 77.01). Gate PASS (repo commit 1c8d6a3, results/raw/env_baseline.json): matches OpenGait evaluator at fp32 distance exactly, all conditions within 1.0 pp of reported
 - OpenGait reported Rank-1 (NM/BG/CL) for comparison: GaitBase 97.6 / 94.0 / 77.4; GaitSet 95.8 / 90.0 / 75.4 (OpenGait `docs/1.model_zoo.md` at the pinned commit, identical view excluded)
