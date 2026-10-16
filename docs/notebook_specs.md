@@ -1,6 +1,6 @@
 # Notebook specifications
 
-Three parallel workstreams. Each notebook: Cell 1 records metadata (date, seed, platform,
+Three parallel workstreams. **Team is now two people: owners, interfaces and gates are in `docs/implementation.md`, which overrides the Owner column below.** Each notebook: Cell 1 records metadata (date, seed, platform,
 GPU, Python/PyTorch/CUDA, OpenGait commit, config). Pilot on the fixed subset first. Every
 notebook ends with a markdown cell: findings, limitations, next step. Long jobs follow the
 compute rules in CLAUDE.md (resumable, checkpoint every ≤30 min, chunks <3 h).

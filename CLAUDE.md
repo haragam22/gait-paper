@@ -173,7 +173,7 @@ docs/         notebook_specs.md deviations.md reproducibility.md execution_plan_
 
 ## Build order
 
-Three workstreams run in parallel (see docs/notebook_specs.md). Within a workstream, do
+Two people work in parallel; ownership, interfaces and phase gates are in docs/implementation.md (notebook steps in docs/notebook_specs.md). Within a workstream, do
 not start a step until the previous step's gate passes. Shared foundations first:
 `src/utils.py`, `src/checkpointing.py`, `src/data.py`, `src/evaluation.py` and
 Notebook 01 — every workstream depends on them.
