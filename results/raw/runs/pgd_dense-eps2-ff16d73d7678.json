@@ -1,0 +1,33 @@
+{
+  "run_id": "pgd_dense-eps2-ff16d73d7678",
+  "attack": "pgd_dense",
+  "tier": "A",
+  "seed": 0,
+  "config": {
+    "family": "dense",
+    "eps": 0.00784313725490196,
+    "eps_255": 2,
+    "steps": 50,
+    "step_size_ratio": 0.1,
+    "random_start": true,
+    "subset": "results/processed/subset_attack.csv"
+  },
+  "model": "gaitbase",
+  "checkpoint": "/kaggle/working/GaitBase_DA-60000.pt",
+  "checkpoint_id": "ff16d73d7678",
+  "n_probes": 390,
+  "env": {
+    "date_utc": "2026-10-16T14:30:50+00:00",
+    "seed": 0,
+    "platform": "kaggle",
+    "python": "3.13.15",
+    "torch": "2.11.0+cu128",
+    "cuda": "12.8",
+    "gpu": "Tesla T4",
+    "opengait_commit": "4d228e154ae6f7473db49e0ef33493be0c137601",
+    "repo_commit": "8855ba96061e0b9aab5a8b1ea10e366c8cc64cb3",
+    "notebook": "02_pgd_attack",
+    "checkpoint": "/kaggle/working/GaitBase_DA-60000.pt",
+    "checkpoint_id": "ff16d73d7678"
+  }
+}
