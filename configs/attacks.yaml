@@ -37,6 +37,6 @@ hou:
 subsets:
   # Size the attack subset in Notebook 02 from a timed PGD step (one sweep < 3 h). Fixed file
   # results/processed/subset_attack.csv is the source of truth once written.
-  attack_n_per_condition: ""
+  attack_n_per_condition: 130   
   pilot_n_per_condition: 10
   attribution_n_per_condition: 20
