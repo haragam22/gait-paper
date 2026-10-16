@@ -1,0 +1,198 @@
+{
+  "date_utc": "2026-10-16T11:32:47+00:00",
+  "seed": 0,
+  "platform": "kaggle",
+  "python": "3.13.15",
+  "torch": "2.11.0+cu128",
+  "cuda": "12.8",
+  "gpu": "Tesla T4",
+  "opengait_commit": "4d228e154ae6f7473db49e0ef33493be0c137601",
+  "repo_commit": "1c8d6a3c0580cad387a02fc1f49247e3b5ce646a",
+  "notebook": "01_baseline_and_data_validation",
+  "checkpoint": "/kaggle/working/GaitBase_DA-60000.pt",
+  "checkpoint_id": "ff16d73d7678",
+  "fp16_eval": true,
+  "frames_all_limit": 720,
+  "gate": [
+    {
+      "model": "gaitbase",
+      "condition": "NM",
+      "ours": 97.87,
+      "opengait_evaluator": 97.87,
+      "opengait_evaluator_fp16": 97.9,
+      "reported": 97.6,
+      "diff_vs_reported": 0.27,
+      "matches_evaluator": true,
+      "within_tolerance": true
+    },
+    {
+      "model": "gaitbase",
+      "condition": "BG",
+      "ours": 93.85,
+      "opengait_evaluator": 93.85,
+      "opengait_evaluator_fp16": 93.87,
+      "reported": 94.0,
+      "diff_vs_reported": -0.15,
+      "matches_evaluator": true,
+      "within_tolerance": true
+    },
+    {
+      "model": "gaitbase",
+      "condition": "CL",
+      "ours": 77.03,
+      "opengait_evaluator": 77.03,
+      "opengait_evaluator_fp16": 77.01,
+      "reported": 77.4,
+      "diff_vs_reported": -0.37,
+      "matches_evaluator": true,
+      "within_tolerance": true
+    }
+  ],
+  "per_view_gaitbase": {
+    "000": {
+      "BG": 92.3,
+      "CL": 69.5,
+      "NM": 95.1
+    },
+    "018": {
+      "BG": 95.6,
+      "CL": 80.2,
+      "NM": 99.6
+    },
+    "036": {
+      "BG": 96.3,
+      "CL": 82.6,
+      "NM": 100.0
+    },
+    "054": {
+      "BG": 95.86,
+      "CL": 81.4,
+      "NM": 99.1
+    },
+    "072": {
+      "BG": 91.7,
+      "CL": 77.0,
+      "NM": 97.0
+    },
+    "090": {
+      "BG": 90.6,
+      "CL": 75.0,
+      "NM": 95.6
+    },
+    "108": {
+      "BG": 92.3,
+      "CL": 76.1,
+      "NM": 98.0
+    },
+    "126": {
+      "BG": 96.0,
+      "CL": 78.9,
+      "NM": 99.3
+    },
+    "144": {
+      "BG": 97.4,
+      "CL": 80.9,
+      "NM": 99.9
+    },
+    "162": {
+      "BG": 95.66,
+      "CL": 78.9,
+      "NM": 99.2
+    },
+    "180": {
+      "BG": 88.6,
+      "CL": 66.8,
+      "NM": 93.8
+    },
+    "mean": {
+      "BG": 93.85,
+      "CL": 77.03,
+      "NM": 97.87
+    }
+  },
+  "n_sequences": 5485,
+  "missing_sequences": [
+    [
+      "079",
+      "bg-02",
+      "054"
+    ],
+    [
+      "079",
+      "bg-02",
+      "162"
+    ],
+    [
+      "088",
+      "nm-03",
+      "054"
+    ],
+    [
+      "088",
+      "nm-03",
+      "126"
+    ],
+    [
+      "088",
+      "nm-03",
+      "162"
+    ],
+    [
+      "088",
+      "nm-03",
+      "180"
+    ],
+    [
+      "088",
+      "nm-04",
+      "054"
+    ],
+    [
+      "088",
+      "nm-04",
+      "126"
+    ],
+    [
+      "088",
+      "nm-04",
+      "144"
+    ],
+    [
+      "088",
+      "nm-04",
+      "162"
+    ],
+    [
+      "088",
+      "nm-04",
+      "180"
+    ],
+    [
+      "109",
+      "nm-01",
+      "126"
+    ],
+    [
+      "109",
+      "nm-01",
+      "144"
+    ],
+    [
+      "109",
+      "nm-01",
+      "162"
+    ],
+    [
+      "109",
+      "nm-01",
+      "180"
+    ]
+  ],
+  "suspicious_frames": [
+    [
+      "096-nm-04-144",
+      1,
+      71
+    ]
+  ]
+}

@@ -145,3 +145,30 @@ def init_single_process_dist() -> None:
     os.environ.setdefault("MASTER_PORT", "29511")
     backend = "nccl" if torch.cuda.is_available() else "gloo"
     dist.init_process_group(backend, rank=0, world_size=1)
+
+
+def push_results(repo_dir: str | Path, message: str, token: str | None = None,
+                 paths: tuple[str, ...] = ("results",), branch: str = "main") -> bool:
+    """Commit `paths` in a cloned repo and push them (Kaggle/Colab -> GitHub), so results can be
+    pulled locally. Returns False if nothing changed. Gitignored artefacts (*.npz, *.pt, parquet)
+    are never pushed. `token`: GitHub token with Contents read+write; it goes through env-only git
+    config, so it never appears in argv, error messages or .git/config (saved with Kaggle output)."""
+    import base64
+    env = dict(os.environ)
+    if token:
+        auth = base64.b64encode(f"x-access-token:{token}".encode()).decode()
+        env.update(GIT_CONFIG_COUNT="1", GIT_CONFIG_KEY_0="http.extraheader",
+                   GIT_CONFIG_VALUE_0=f"Authorization: Basic {auth}")
+
+    def git(*args: str, check: bool = True) -> subprocess.CompletedProcess:
+        return subprocess.run(["git", "-C", str(repo_dir), "-c", "user.name=notebook-run",
+                               "-c", "user.email=notebook-run@users.noreply.github.com", *args],
+                              env=env, check=check, capture_output=True, text=True)
+
+    git("add", "--", *paths)
+    if git("diff", "--cached", "--quiet", check=False).returncode == 0:
+        return False
+    git("commit", "-m", message)
+    git("pull", "--rebase", "origin", branch)   # teammate may have pushed meanwhile
+    git("push", "origin", f"HEAD:{branch}")
+    return True
