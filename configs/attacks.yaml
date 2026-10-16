@@ -1,0 +1,42 @@
+# Single source of truth for attack settings. Notebooks read this; never hardcode.
+seed: 0
+norm: linf
+eps_grid: [2, 4, 8, 16]   # divided by 255 in code
+steps: 50
+step_size_ratio: 0.1      # step = eps * ratio
+random_start: true
+restarts: 1
+loss: margin              # d(nearest true) - d(nearest other), pooled cross-view gallery
+
+families:
+  dense:
+    mask: all
+  edge:
+    # Same edge region as Hou et al. 2025 ("Spatial Sparse Attack", Fig. 3): pixels whose distance to the
+    # silhouette boundary (cv2.distanceTransform) is < tau, so the bridge test compares
+    # optimisers/budgets, not masks. Computed on the binarised clean frame (> 0.5).
+    mask: hou_distance_band
+    tau: 1.0
+  temporal:
+    mask: frames
+    k_frames: [1, 3, 5]
+    # He et al. 2023 ("Temporal sparse attack" section) select the K altered frames at RANDOM (not first-K).
+    selection: [random_k, topk_grad]   # random_k: seeded per sample; topk_grad: |grad| at step 0
+
+# Tier B — Hou et al., IJCV 2025 (values from their implementation-details paragraph)
+hou:
+  tau: 1.0                  # edge distance threshold
+  optimiser: adam
+  lr: 1.0
+  iters: 20
+  margin_m: 10.0            # m in their Eq. (1)
+  lambda_imper: 20.0        # lambda in their Eq. (4), untargeted
+  tsr: [1.0, 0.5]           # 1.0 = bridge-test setting (all frames, isolates edge support); 0.5 = their headline CASIA-B setting
+  frame_selection: random   # their "Temporal Sparse Attack": N_a frames randomly selected
+
+subsets:
+  # Size the attack subset in Notebook 02 from a timed PGD step (one sweep < 3 h). Fixed file
+  # results/processed/subset_attack.csv is the source of truth once written.
+  attack_n_per_condition: ""
+  pilot_n_per_condition: 10
+  attribution_n_per_condition: 20

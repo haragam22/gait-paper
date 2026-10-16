@@ -1,0 +1,26 @@
+# He et al. 2023 reproduction (Pattern Recognition; arXiv 2002.09674v3). Values marked
+# [paper] are stated in the paper; [ours] are our choices, each recorded in docs/deviations.md.
+seed: 0
+train_subjects: "001-074"     # [ours] CASIA-B TRAINING subjects only; paper says "trained on CASIA-B"
+image_size: [64, 44]          # [ours] OpenGait input size; paper does not state G output size
+latent_dim: 128               # [paper] V = 128
+latent_prior: sphere          # [paper] uniform on sqrt(V)*S^(V-1) (PULSE-style)
+architecture: dcgan           # [ours] paper does not specify G/D architecture
+gp_lambda: 10                 # [ours] WGAN-GP default (Gulrajani et al.)
+n_critic: 5                   # [ours] WGAN-GP default
+train_iters: 16000            # [paper] "We train the WGAN-GP on CASIA-B for 16000 iterations"
+batch_size: 64                # [ours]
+lr: 0.0001                    # [ours] WGAN-GP default
+betas: [0.0, 0.9]             # [ours] WGAN-GP default
+checkpoint_every_minutes: 30
+attack:
+  optimiser: mi_fgsm          # [paper]
+  iters: 100                  # [paper]
+  lambda_bce: 1000            # [paper] lambda in Eq. (5)
+  decay_mu: 1.0               # [paper] mu in Eq. (6)
+  step_alpha: 0.1             # [paper] alpha in Eq. (7)
+  mode: frame_alteration      # [paper] frame-alteration only (no insertion)
+  frame_selection: random_k   # [paper] "Temporal sparse attack": K indices randomly sampled
+  k_over_n: [0.025, 0.05, 0.1]   # [paper] sparsity 1/40, 1/20, 1/10
+  loss: cosine_feature + disc_bce
+  validation_model: gaitset   # [paper] target model; compare accuracy drop before GaitBase

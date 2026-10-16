@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+# copyrighted papers and personal files: never push
+*.pdf
+phase0_papers/
+# large artefacts: live in the team Kaggle Dataset / Drive
+*.pt
+*.pth
+*.npz
+results/processed/*.npz
+results/fingerprints/*.parquet

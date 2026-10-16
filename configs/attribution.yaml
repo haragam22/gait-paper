@@ -1,0 +1,16 @@
+target: neg_distance_to_true_identity_centroid   # gallery centroid, identical view excluded
+methods: [layer_gradcam, integrated_gradients]
+ig_steps: 32
+ig_baseline: zeros
+# GaitBase (OpenGait Baseline) children: Backbone (ResNet9 in SetBlockWrapper), FCs, BNNecks, TP.
+# HorizontalPoolingPyramid is a plain class, not an nn.Module, so "HPP output" is captured as
+# the INPUT of FCs (forward pre-hook). Conv-block names: resolve from Backbone.named_modules()
+# in Notebook 09 and freeze the list here.
+layers: all_conv_blocks
+hpp_hook: FCs_input
+strips: 16               # bin_num [16] in gaitbase_da_casiab.yaml
+bootstrap:
+  unit: subject
+  n_resamples: 1000
+  ci: 0.95
+null_baseline: random_mask_equal_size

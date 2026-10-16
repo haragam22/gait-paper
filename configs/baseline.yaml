@@ -1,0 +1,28 @@
+seed: 0
+# Paths: set per platform in Notebook 01 cell 2 (Kaggle /kaggle/..., Colab /content/drive/...).
+opengait_dir: ../OpenGait                       # git clone https://github.com/ShiqiYu/OpenGait
+opengait_commit: 4d228e154ae6f7473db49e0ef33493be0c137601   # pinned 2026-10-15; checkout this
+dataset_root: ""                                # OpenGait-pretreated CASIA-B pkl root (CASIA-B-pkl/)
+
+models:
+  gaitbase:
+    model_config: configs/gaitbase/gaitbase_da_casiab.yaml   # verified present at pinned commit
+    checkpoint: ""   # GaitBase_DA-60000.pt
+    checkpoint_url: https://huggingface.co/opengait/OpenGait/resolve/main/CASIA-B/Baseline/GaitBase_DA/checkpoints/GaitBase_DA-60000.pt
+    # OpenGait docs/1.model_zoo.md (pinned commit), CASIA-B, identical view excluded:
+    reported_rank1: {NM: 97.6, BG: 94.0, CL: 77.4}
+  gaitset:
+    model_config: configs/gaitset/gaitset.yaml
+    # No CASIA-B GaitSet checkpoint is released on huggingface.co/opengait/OpenGait (checked
+    # 2026-10-15; only CASIA-E). We train it with OpenGait (notebooks/01b_gaitset_training).
+    checkpoint: ""   # output/CASIA-B/GaitSet/GaitSet/checkpoints/GaitSet-40000.pt
+    reported_rank1: {NM: 95.8, BG: 90.0, CL: 75.4}   # OpenGait model zoo (original paper in brackets there)
+
+gate_tolerance_pct: 1.0       # Oct 17 gate: |ours - reported| <= 1.0 per condition
+
+exclude_identical_view: true
+gallery_types: [nm-01, nm-02, nm-03, nm-04]
+probe_types:
+  NM: [nm-05, nm-06]
+  BG: [bg-01, bg-02]
+  CL: [cl-01, cl-02]

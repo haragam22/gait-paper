@@ -1,0 +1,21 @@
+# DAGait-style defence (Zheng et al., IJCB 2025): adversarial training in EMBEDDING space.
+method: feature_level_progressive_at   # FPA: PGD on the embedding, progressive clean/adv mixing
+init_from: baseline_checkpoint          # fine-tune GaitBase_DA-60000, never from scratch
+feature_pgd:
+  eps: ""          # fill from DAGait Table 1 / Sec. 3.2 when implementing; record in deviations.md
+  steps: ""
+  step_size: ""
+mixing: linear_ramp                     # alpha_t rises linearly over training (their Sec. 3.2)
+triweight_loss: false                   # [ours] keep OpenGait triplet+CE; TriWeight is a separate contribution
+fine_tune_iters: ""      # size to ~20 GPU-hours total after timing one iteration
+eval_attacks: adaptive   # every attack re-run on the defended model's own gradients
+
+# PRE-REGISTERED transfer criterion (proposed 2026-10-15; team must confirm before Nov 3,
+# and before any defended-model result is looked at):
+#   For attack A at its matched operating point, transfer gain
+#     g(A) = Rank1_defended_adaptive(A) - Rank1_undefended(A)    (percentage points, all probes in subset)
+#   The defence "transfers" to A if the subject-level bootstrap 95% CI of g(A) excludes 0 AND
+#   g(A) >= 0.5 * g(dense PGD, eps=8/255).
+transfer_criterion: "g(A) CI excludes 0 and g(A) >= 0.5 * g(dense_pgd_eps8)"
+transfer_criterion_confirmed: false
+fallback_date: 2026-11-01

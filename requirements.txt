@@ -1,0 +1,9 @@
+# Kaggle/Colab images already ship torch, torchvision, numpy, pandas, matplotlib, scipy.
+torch>=2.1
+einops
+pyyaml
+tensorboard          # imported by OpenGait's msg_manager
+pandas
+matplotlib
+opencv-python-headless   # edge masks (cv2.distanceTransform), from Notebook 03
+pytest

@@ -1,0 +1,6 @@
+claim_id,intended_claim,required_evidence,notebook,result_files,uncertainty,caveats,status
+C1,The five attacks degrade recognition differently at matched success rate,Common-protocol attack evaluation,08,results/raw/*_results.csv,,,pending
+C2,Attacks with different perturbation support disrupt different layers/body strips,Tier A fingerprint similarity with CIs and null baselines,09-10,results/tables/fingerprint_similarity.csv,,Tier A only — causal for support,pending
+C3,Each published attack's fingerprint matches its controlled counterpart,Bridge test with CIs,10,results/tables/bridge_test.csv,,Depends on Tier B reproduction fidelity,pending
+C4,Fingerprint similarity is associated with defence transfer,Defence transfer matrix + fingerprint matrix,11,results/tables/defence_transfer.csv,,Drop if defence fallback triggered,pending
+C5,Findings are robust to sampling variability,Subject-level bootstrap,10,,,,pending
