@@ -11,6 +11,9 @@ loss: margin              # d(nearest true) - d(nearest other), pooled cross-vie
 families:
   dense:
     mask: all
+    # Added 2026-10-17: dense PGD succeeds on 100% of clean-correct probes already at 2/255
+    # (Notebook 02), so smaller eps give the curve range for the matched-success point (Notebook 08).
+    extra_eps: [0.25, 0.5, 1]
   edge:
     # Same edge region as Hou et al. 2025 ("Spatial Sparse Attack", Fig. 3): pixels whose distance to the
     # silhouette boundary (cv2.distanceTransform) is < tau, so the bridge test compares
