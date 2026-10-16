@@ -322,3 +322,14 @@ def gate_rows(model_name: str, table: pd.DataFrame, official: dict, reported: di
                          matches_evaluator=abs(ours - og) < 0.01,
                          within_tolerance=abs(ours - rep) <= tolerance_pct))
     return rows
+
+
+def summarize_runs(df: pd.DataFrame, by: list[str]) -> pd.DataFrame:
+    """Mean per group of the standard per-sample columns (Rank-1 in %, success rate, actual
+    perturbation size). Adds eps_255 = round(eps * 255) for grouping."""
+    df = df.assign(eps_255=(df["eps"].astype(float) * 255).round().astype(int))
+    cols = ["clean_rank1_viewavg", "adv_rank1_viewavg", "attack_success", "linf_actual", "l2_actual",
+            "frac_perturbed", "n_frames_perturbed"]
+    out = df.groupby(by)[cols].mean()
+    out[["clean_rank1_viewavg", "adv_rank1_viewavg"]] *= 100
+    return out.assign(n=df.groupby(by).size())

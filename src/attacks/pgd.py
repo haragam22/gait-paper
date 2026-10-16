@@ -77,3 +77,19 @@ class PGD:
             delta = (delta + self.alpha * grad.sign() * mask).clamp(-self.eps, self.eps)
             delta = (x + delta).clamp(0, 1) - x
         return (x + delta).detach()
+
+
+def run_tier_a(model: GaitModel, data, gallery, probes: list, family: str, support: Support, e255: int,
+               atk: dict, seed: int, out_csv, subset_path, run_meta: dict | None = None):
+    """One Tier A sweep point: PGD with `support` at eps = e255/255 on `probes`, through
+    evaluate_attack. `family` names the run (e.g. "dense", "edge", "temporal_random_k_k3");
+    run_id = pgd_{family}-eps{e255}-{checkpoint_id}, so re-running resumes. `atk` =
+    configs/attacks.yaml. Returns this run's rows (pandas DataFrame)."""
+    from ..evaluation import evaluate_attack
+    cfg = {"family": family, "eps": e255 / 255, "eps_255": e255, "steps": atk["steps"],
+           "step_size_ratio": atk["step_size_ratio"], "random_start": atk["random_start"],
+           "subset": str(subset_path)}
+    attack = PGD(e255 / 255, support, atk["steps"], atk["step_size_ratio"], atk["random_start"], seed)
+    return evaluate_attack(model, data, gallery, probes, attack, attack_name=f"pgd_{family}", tier="A",
+                           config=cfg, seed=seed, out_csv=out_csv,
+                           run_id=f"pgd_{family}-eps{e255}-{model.checkpoint_id}", run_meta=run_meta)

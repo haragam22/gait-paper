@@ -63,3 +63,16 @@ def test_edge_mask_is_one_pixel_ring_each_side():
     assert int(m.sum()) - 36 == 44                   # outer 8-connected ring
     assert m[7:13, 7:13].sum() == 0 and m[0].sum() == 0
     assert M.edge_mask(torch.zeros(1, 2, 8, 8)).sum() == 0     # empty frames: no edge
+
+
+def test_run_tier_a_resumes_and_summarizes(setup, tmp_path):
+    from src.attacks.pgd import run_tier_a
+    from src.evaluation import read_results, summarize_runs
+    model, data, gallery = setup
+    atk = {"steps": 2, "step_size_ratio": 0.1, "random_start": True}
+    out = tmp_path / "raw" / "t.csv"
+    run_tier_a(model, data, gallery, data.probes[:3], "dense", dense(), 8, atk, 0, out, "s.csv")
+    df = run_tier_a(model, data, gallery, data.probes[:6], "dense", dense(), 8, atk, 0, out, "s.csv")
+    assert len(df) == 6 and len(read_results(out)) == 6
+    s = summarize_runs(df, ["eps_255", "condition"])
+    assert set(s.index.get_level_values(0)) == {8} and s["n"].sum() == 6
