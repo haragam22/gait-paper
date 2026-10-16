@@ -5,7 +5,8 @@ is `attack=None`. An attack is any callable
 
     attack(model: GaitModel, x: Tensor[1, T, H, W], target: AttackTarget) -> Tensor[1, T, H, W]
 
-returning the adversarial sequence (same shape, values in [0, 1]).
+returning the adversarial sequence (same shape, values in [0, 1]). An attack may expose an `info`
+dict of per-sample fields (e.g. selected frames); evaluate_attack copies it into the row.
 
 Protocol (matches OpenGait `single_view_gallery_evaluation`, CASIA-B):
   gallery = nm-01..04, probes = nm-05/06, bg-01/02, cl-01/02. For each probe and each gallery
@@ -146,17 +147,20 @@ class Gallery:
 @dataclass
 class AttackTarget:
     """What an attack needs about one probe. gallery_emb: [G', C, P] pooled cross-view
-    gallery (identical view excluded); is_true: [G'] bool, True where label == probe label."""
+    gallery (identical view excluded); is_true: [G'] bool, True where label == probe label.
+    sample_id: used by attacks to derive per-sample seeds (random start, random frames)."""
     label: str
     view: str
     gallery_emb: torch.Tensor
     is_true: torch.Tensor
+    sample_id: str = ""
 
     @classmethod
     def for_probe(cls, gallery: Gallery, rec: SeqRecord) -> "AttackTarget":
         keep = gallery.views != rec.view
         is_true = torch.from_numpy(gallery.labels[keep] == rec.subject).to(gallery.emb.device)
-        return cls(rec.subject, rec.view, gallery.emb[torch.from_numpy(keep).to(gallery.emb.device)], is_true)
+        return cls(rec.subject, rec.view, gallery.emb[torch.from_numpy(keep).to(gallery.emb.device)], is_true,
+                   rec.sample_id)
 
 
 def margin(emb: torch.Tensor, target: AttackTarget, eps: float = 0.0) -> torch.Tensor:
@@ -254,7 +258,8 @@ def evaluate_attack(model: GaitModel, data: CasiaB, gallery: Gallery, probes: li
                "clean_rank1_viewavg": clean["rank1_viewavg"], "adv_rank1_viewavg": adv["rank1_viewavg"],
                "clean_margin": clean["margin"], "adv_margin": adv["margin"],
                "embedding_shift_l2": float((e_adv - e_clean).flatten().norm()),
-               **perturbation_stats(x, x_adv)}
+               **perturbation_stats(x, x_adv),
+               **(getattr(attack, "info", None) or {})}   # attack-specific per-sample fields
         rows.append(row)
         if out_csv:
             append_rows(out_csv, [row])

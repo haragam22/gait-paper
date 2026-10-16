@@ -172,3 +172,33 @@ def push_results(repo_dir: str | Path, message: str, token: str | None = None,
     git("pull", "--rebase", "origin", branch)   # teammate may have pushed meanwhile
     git("push", "origin", f"HEAD:{branch}")
     return True
+
+
+def set_yaml_scalar(path: str | Path, key: str, value: Any) -> None:
+    """Set a top-level or nested `key: value` line in a YAML file in place, keeping comments.
+    The key must appear exactly once."""
+    import re
+    text = Path(path).read_text(encoding="utf8")
+    pat = re.compile(rf"^(\s*{re.escape(key)}:)[^#\n]*", re.M)
+    if len(pat.findall(text)) != 1:
+        raise KeyError(f"{key!r} must appear exactly once in {path}")
+    Path(path).write_text(pat.sub(lambda m: f"{m.group(1)} {value}   ", text), encoding="utf8")
+
+
+def size_subset(sec_per_probe: float, n_sweeps: int, budget_hours: float,
+                max_sweep_hours: float = 3.0, n_conditions: int = 3) -> int:
+    """Probes per condition so that `n_sweeps` (attack, eps) sweeps fit `budget_hours` in total
+    and one sweep fits `max_sweep_hours` (CLAUDE.md compute rules)."""
+    per_sweep = min(budget_hours / n_sweeps, max_sweep_hours) * 3600
+    return int(per_sweep / sec_per_probe // n_conditions)
+
+
+def github_token(platform_name: str) -> str | None:
+    """GITHUB_TOKEN from Kaggle secrets / Colab userdata; None locally (own git credentials)."""
+    if platform_name == "kaggle":
+        from kaggle_secrets import UserSecretsClient
+        return UserSecretsClient().get_secret("GITHUB_TOKEN")
+    if platform_name == "colab":
+        from google.colab import userdata
+        return userdata.get("GITHUB_TOKEN")
+    return None
