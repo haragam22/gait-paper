@@ -79,7 +79,7 @@ class PGD:
         return (x + delta).detach()
 
 
-def run_tier_a(model: GaitModel, data, gallery, probes: list, family: str, support: Support, e255: int,
+def run_tier_a(model: GaitModel, data, gallery, probes: list, family: str, support: Support, e255: float,
                atk: dict, seed: int, out_csv, subset_path, run_meta: dict | None = None):
     """One Tier A sweep point: PGD with `support` at eps = e255/255 on `probes`, through
     evaluate_attack. `family` names the run (e.g. "dense", "edge", "temporal_random_k_k3");
@@ -92,4 +92,4 @@ def run_tier_a(model: GaitModel, data, gallery, probes: list, family: str, suppo
     attack = PGD(e255 / 255, support, atk["steps"], atk["step_size_ratio"], atk["random_start"], seed)
     return evaluate_attack(model, data, gallery, probes, attack, attack_name=f"pgd_{family}", tier="A",
                            config=cfg, seed=seed, out_csv=out_csv,
-                           run_id=f"pgd_{family}-eps{e255}-{model.checkpoint_id}", run_meta=run_meta)
+                           run_id=f"pgd_{family}-eps{e255:g}-{model.checkpoint_id}", run_meta=run_meta)

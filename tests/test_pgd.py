@@ -76,3 +76,13 @@ def test_run_tier_a_resumes_and_summarizes(setup, tmp_path):
     assert len(df) == 6 and len(read_results(out)) == 6
     s = summarize_runs(df, ["eps_255", "condition"])
     assert set(s.index.get_level_values(0)) == {8} and s["n"].sum() == 6
+
+
+def test_fractional_eps_keeps_its_value(setup, tmp_path):
+    from src.attacks.pgd import run_tier_a
+    from src.evaluation import summarize_runs
+    model, data, gallery = setup
+    atk = {"steps": 1, "step_size_ratio": 0.1, "random_start": True}
+    df = run_tier_a(model, data, gallery, data.probes[:2], "dense", dense(), 0.5, atk, 0, tmp_path / "r.csv", "s")
+    assert df.run_id.iloc[0].startswith("pgd_dense-eps0.5-") and float(df.linf_actual.max()) <= 0.5 / 255 + 1e-6
+    assert list(summarize_runs(df, ["eps_255"]).index) == [0.5]
